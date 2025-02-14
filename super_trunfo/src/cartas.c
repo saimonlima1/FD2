@@ -23,59 +23,48 @@ void listarCartas() {
 
 void inserirCarta() {
     if (totalCartas >= MAX_CARTAS) {
-        printf("Deck cheio!\n");
+        printf("O deck está cheio! Não é possível adicionar mais cartas.\n");
         return;
     }
 
     Carta novaCarta;
+    int temp;  // Variável temporária para armazenar a entrada do Super Trunfo
 
     printf("Nome da carta: ");
-    fgets(novaCarta.nome, sizeof(novaCarta.nome), stdin);
-    novaCarta.nome[strcspn(novaCarta.nome, "\n")] = 0;  // Remove o '\n' lido pelo fgets
+    scanf(" %[^\n]", novaCarta.nome);
 
     printf("Ataque: ");
-    while (scanf("%f", &novaCarta.ataque) != 1) {
-        printf("Entrada inválida! Digite um número: ");
-        limparBuffer();
-    }
-    limparBuffer(); // Evita problemas no próximo scanf
+    scanf("%f", &novaCarta.ataque);
 
     printf("Defesa: ");
-    while (scanf("%f", &novaCarta.defesa) != 1) {
-        printf("Entrada inválida! Digite um número: ");
-        limparBuffer();
-    }
-    limparBuffer();
+    scanf("%f", &novaCarta.defesa);
 
     printf("Velocidade: ");
-    while (scanf("%f", &novaCarta.velocidade) != 1) {
-        printf("Entrada inválida! Digite um número: ");
-        limparBuffer();
-    }
-    limparBuffer();
+    scanf("%f", &novaCarta.velocidade);
 
     printf("HP: ");
-    while (scanf("%f", &novaCarta.hp) != 1) {
-        printf("Entrada inválida! Digite um número: ");
-        limparBuffer();
-    }
-    limparBuffer();
+    scanf("%f", &novaCarta.hp);
 
     printf("É Super Trunfo? (1-Sim / 0-Não): ");
-    int opcao;
-    while (scanf("%d", &opcao) != 1 || (opcao != 0 && opcao != 1)) {
-        printf("Entrada inválida! Digite 1 para Sim ou 0 para Não: ");
-        limparBuffer();
+    scanf("%d", &temp);
+    novaCarta.superTrunfo = (temp == 1);
+
+    // Se a carta for um Super Trunfo, remover qualquer outro Super Trunfo existente
+    if (novaCarta.superTrunfo) {
+        for (int i = 0; i < totalCartas; i++) {
+            if (deck[i].superTrunfo) {
+                deck[i].superTrunfo = 0;  // Remove o status de Super Trunfo da carta anterior
+                printf("A carta '%s' perdeu o status de Super Trunfo.\n", deck[i].nome);
+                break;  // Garante que apenas um Super Trunfo exista
+            }
+        }
     }
-    novaCarta.superTrunfo = opcao;
 
+    // Adiciona a nova carta ao deck
     deck[totalCartas++] = novaCarta;
-    printf("Carta adicionada com sucesso!\n");
-
+    printf("Carta '%s' adicionada com sucesso!\n", novaCarta.nome);
     salvarDeck();
 }
-
-
 
 void carregarCartasDoCSV() {
     FILE *arquivo = fopen("data/cartas.csv", "r");
@@ -116,9 +105,6 @@ void carregarCartasDoCSV() {
     fclose(arquivo);
     printf("Cartas carregadas com sucesso! Total: %d\n", totalCartas);
 }
-
-
-
 
 void salvarCartasBinario() {
     FILE *arquivo = fopen("data/cartas.bin", "wb");
@@ -223,7 +209,6 @@ void alterarCarta() {
 
     printf("Carta alterada com sucesso!\n");
 }
-
 
 void excluirCarta() {
     listarCartas();

@@ -29,6 +29,4 @@ void alterarCarta();
 void excluirCarta();
 void pesquisarCarta();
 
-
-
 #endif

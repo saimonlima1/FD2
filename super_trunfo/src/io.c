@@ -22,7 +22,6 @@ void exportarParaCSV() {
     printf("Deck exportado com sucesso para 'data/cartas.csv'.\n");
 }
 
-
 void salvarDeck() {
     FILE *arquivo = fopen("data/cartas.bin", "wb");
     if (arquivo == NULL) {
